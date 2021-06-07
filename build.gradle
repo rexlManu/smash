@@ -1,0 +1,60 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+}
+
+group = 'de.rexlmanu'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = targetCompatibility = '11'
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    // compileOnly files("libs/spigot-1.16.5.jar") for nms
+    shade 'com.google.inject:guice:5.0.1'
+    shade 'com.github.ReflxctionDev:cub:1.8.1'
+    shade 'eu.miopowered:repository:1.0'
+    shade 'eu.miopowered:packetlistener:1.0'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+jar {
+    destinationDirectory.set(file("C:\\Users\\Emman\\Desktop\\plugin-testserver\\plugins"))
+
+    configurations.shade.each { dep ->
+        if(!dep.isDirectory() && !dep.path.endsWith(".pom")) {
+            from(project.zipTree(dep)) {
+                exclude 'META-INF', 'META-INF/**'
+            }
+        }
+    }
+}

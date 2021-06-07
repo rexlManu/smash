@@ -1,0 +1,4 @@
+name: Smash
+version: @version@
+main: de.rexlmanu.smash.SmashPlugin
+api-version: 1.16
